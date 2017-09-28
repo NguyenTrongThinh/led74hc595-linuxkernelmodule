@@ -26,6 +26,8 @@ typedef struct privatedata {
 } led74hc595_private;
 
 led74hc595_private devices[NMINORS];
+struct hrtimer htimer;
+static ktime_t kt_period;
 
 /* Declare the required variables */
 int major;
@@ -153,6 +155,28 @@ struct file_operations led74hc595_fops= {
 	.write			= led74hc595_write,
 	.unlocked_ioctl = led74hc595_ioctl
 };
+static enum hrtimer_restart timer_timeout(struct hrtimer *timer)
+{
+
+	PINFO("Inside the timer function, with data\n");
+	hrtimer_forward_now(timer, kt_period);
+	return HRTIMER_RESTART;
+	/* To make the timer periodic, uncomment the following line */
+}
+
+static void timer_init(void)
+{
+// Init timer
+	kt_period = ktime_set(3, 10000);
+	hrtimer_init(&htimer, CLOCK_REALTIME, HRTIMER_MODE_REL);
+	htimer.function = timer_timeout;
+	hrtimer_start(&htimer, kt_period, HRTIMER_MODE_REL);
+}
+
+static void timer_cancel(void)
+{
+	hrtimer_cancel(&htimer);
+}
 
 static int __init led74hc595_init(void)
 {
@@ -200,6 +224,8 @@ static int __init led74hc595_init(void)
 
 		devices[i].nMinor = minor + i;
 	}
+	timer_init();
+
 	PINFO("Out init() function\n");
 	return 0;
 }
@@ -212,6 +238,7 @@ static void __exit led74hc595_exit(void)
 	PINFO("In exit() function\n");
 
 	/* Remove cdev and device nodes with linux kernel */
+	timer_cancel();
 	for(i = 0; i < NMINORS; i++) {
 
 		deviceno = MKDEV(major, minor+i);

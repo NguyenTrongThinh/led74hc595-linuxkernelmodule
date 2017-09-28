@@ -16,5 +16,3 @@ install:
 clean:
 	make -C $(KERN_SRC) M=$(PWD) clean
 	rm -f ../app
-	
-	
