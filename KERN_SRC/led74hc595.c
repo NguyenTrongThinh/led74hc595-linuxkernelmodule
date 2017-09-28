@@ -6,6 +6,8 @@
  Description : LED 7seg 74HC595. hshop.vn
  ========================================================================================
  */
+//Chu ky quet LED ms ra device tree
+//GPIO re device tree
 
 #include"led74hc595.h"
 
@@ -178,6 +180,15 @@ static void timer_cancel(void)
 	hrtimer_cancel(&htimer);
 }
 
+static void gpio_init(void)
+{
+
+}
+
+static void gpio_deinit(void)
+{
+
+}
 static int __init led74hc595_init(void)
 {
 	int i;
