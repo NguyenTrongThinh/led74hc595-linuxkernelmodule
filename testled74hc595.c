@@ -10,7 +10,7 @@ int main()
 	char Ubuff[]="SAMPLE CHARDRIVER USING LOWLEVEL FRAMEWORK";
 	char Kbuff[50];
 
-	fd = open("/dev/sample_cdev0", O_RDWR);
+	fd = open("/dev/ledhc0", O_RDWR);
 	if(fd < 0) {
 		perror("Unable to open the device file\n");
 		return -1;
@@ -23,7 +23,6 @@ int main()
 	memset(Kbuff , 0 ,sizeof(Kbuff));
 	read(fd , Kbuff , sizeof(Kbuff));
 	printf("Data from kernel : %s\n", Kbuff);
-
 	close(fd);	
 	return 0;
 }
