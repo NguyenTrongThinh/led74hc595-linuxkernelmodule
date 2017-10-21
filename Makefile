@@ -1,18 +1,14 @@
+obj-m	:= led74hc595.o
 
-obj-m:=led74hc595.o
+SRC := $(shell pwd)
 
-
-KERN_SRC :=/lib/modules/$(shell uname -r)/build/
-PWD:=$(shell pwd)
-
-modules:
-	make -C $(KERN_SRC) M=$(PWD) modules
-	gcc ../testled74hc595.c -o ../app -g
-	
-install:
-	make -C $(KERN_SRC) M=$(PWD) modules_install
-	depmod -a
-
+all:
+	$(MAKE) -C $(KERNEL_SRC) M=$(SRC)
+modules_install:
+	$(MAKE) -C $(KERNEL_SRC) M=$(SRC) modules_install
 clean:
-	make -C $(KERN_SRC) M=$(PWD) clean
-	rm -f ../app
+	rm -f *.o *~ core .depend .*.cmd *.ko *.mod.c
+	rm -f Module.markers Module.symvers modules.order
+	rm -rf .tmp_versions Modules.symvers
+
+	
